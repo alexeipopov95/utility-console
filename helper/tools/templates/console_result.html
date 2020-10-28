@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Resultado
+{% endblock title %}
+
+{% block domain_info %}
+{% if status %}
+<p class="lead"><strong>Dominio:</strong> {{domain}} </p>
+<p class="lead"><strong>Fecha de vencimiento: </strong>{{expiration_date}}</p>
+<p class="lead"><strong>Estado: </strong>{{domain_status}}</p>
+{% endif %}
+{% endblock domain_info %}
+
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Ping</h5>
+                  <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Id officia veritatis voluptates eveniet natus. Eius earum deleniti quis nobis tempore dolorum consequuntur aliquid eveniet perferendis maxime. Numquam delectus soluta iste.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">DNS</h5>
+                  <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Id officia veritatis voluptates eveniet natus. Eius earum deleniti quis nobis tempore dolorum consequuntur aliquid eveniet perferendis maxime. Numquam delectus soluta iste.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Informacion acerca del dominio</h5>
+                  <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Id officia veritatis voluptates eveniet natus. Eius earum deleniti quis nobis tempore dolorum consequuntur aliquid eveniet perferendis maxime. Numquam delectus soluta iste.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Eventos</h5>
+                  <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Id officia veritatis voluptates eveniet natus. Eius earum deleniti quis nobis tempore dolorum consequuntur aliquid eveniet perferendis maxime. Numquam delectus soluta iste.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

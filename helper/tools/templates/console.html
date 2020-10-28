@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Herramientas
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <form>
+        <div class="form-group">
+          <label for="exampleInputEmail1">Dominio</label>
+          <input type="text" class="form-control" id="domain">
+          <small id="domainHelp" class="form-text text-muted">Ingrese el dominio, sin "http://" | "https://" | "www"</small>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Buscar</button>
+      </form>
+
+</div>
+
+{% endblock content %}
+
+
