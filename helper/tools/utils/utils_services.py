@@ -1,12 +1,20 @@
-from datetime import datetime
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+#Custom
 from django.conf import settings
+
+#Python
+from datetime import datetime
 import requests
 import json
 import os
 
+
 class UtilsService(object):
     BASE_DIR = settings.BASE_DIR
     DNS_JSON = os.path.join(BASE_DIR, 'tools', 'templates', 'json', 'rdap_dns.json')
+
 
     # @params None
     def make_dns_json(self):

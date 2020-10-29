@@ -1,16 +1,42 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
 Resultado
 {% endblock title %}
 
-{% block domain_info %}
-{% if status %}
-<p class="lead"><strong>Dominio:</strong> {{domain}} </p>
-<p class="lead"><strong>Fecha de vencimiento: </strong>{{expiration_date}}</p>
-<p class="lead"><strong>Estado: </strong>{{domain_status}}</p>
+
+{% block domain_info1 %}
+<h1 class="display-4" style="text-transform: uppercase;">{{domain}}</h1>
+{% endblock domain_info1 %}
+
+
+
+{% block domain_info2 %}
+{% if domainInfo.status %}
+<div class="grid">
+    <div class="row">
+        <div class="col">
+            <p class="lead" style="background-color: #5BFC2B; padding: 0.7rem 0.7rem; border: 1px solid black; border-radius: 6%;"><strong>Estado: </strong>Registrado</p>            
+        </div>
+        <div class="col">
+            <p class="lead" style="padding: 0.7rem 0.7rem; border: 1px solid black; border-radius: 6%;"><strong>Fecha de vencimiento: </strong>{{domainInfo.events.expiration_date}}</p>            
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="grid">
+    <div class="row">
+        <div class="col">
+            <p class="lead" style="background-color: red; padding: 0.7rem 0.7rem; border: 1px solid black; border-radius: 6%;"><strong>Estado: </strong>Vencido</p>            
+        </div>
+        <div class="col">
+            <p class="lead" style="padding: 0.7rem 0.7rem; border: 1px solid black; border-radius: 6%;"><strong>Fecha de vencimiento: </strong> - </p>            
+        </div>
+    </div>
+</div>
 {% endif %}
-{% endblock domain_info %}
+{% endblock domain_info2 %}
 
 
 {% block content %}
@@ -49,6 +75,15 @@ Resultado
                   <h5 class="card-title">Eventos</h5>
                   <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Id officia veritatis voluptates eveniet natus. Eius earum deleniti quis nobis tempore dolorum consequuntur aliquid eveniet perferendis maxime. Numquam delectus soluta iste.</p>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <br><br>
+                <a href="{% url 'console' %}" class="btn btn-primary btn-lg btn-block">Buscar otro dominio</a>
+                
             </div>
         </div>
     </div>

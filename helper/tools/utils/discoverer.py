@@ -10,12 +10,12 @@ import requests
 import tldextract
 import subprocess
 import platform
+import json
 
 
-class DomainDiscover(object):
-    UTILSSERVICE = UtilsService()
-
+class DomainDiscover(UtilsService):
     
+
     # @params domain STR
     def get_domain(self, domain):
         """ return the domain """
@@ -104,26 +104,51 @@ class DomainDiscover(object):
     # @params domain STR
     def ping(self, domain):
         """ make a ping using subprocess command to retrive the status of the domain """
+
+        result = "Name or service not know"
         try:
             param = None
-
             if platform.system().lower() == "windows":
                 param = "-n"
             else:
                 param = "-c"
             
             command = subprocess.check_output(['ping', param, '5', domain])
-            return "".join(command).split('\n')
+            result  = "".join(command).split('\n')
         except Exception as Error:
             print("[DomainDiscover] - ping\n%s" % Error)
+        
+        return result
+
 
     # @params domain STR
-    def get_information(self, domain):
+    def get_information(self, domain, json_data):
         """ get basic information about the domain """
+
+        domain_data = {
+            'entity' : None,
+            'cuit'   : None,
+            'name'   : None,
+        }
+
         try:
-            pass
+            if domain.endswith('.ar') or domain.endswith('com.ar'):
+                domain_data['entity'] = "Nic Argentina"
+                
+                for elements in json_data['response']['data']['entities'][0]:
+                    domain_data['cuit'] = json_data['response']['data']['entities'][0]['handle']
+                for url in json_data['response']['data']['entities'][0]['links']:
+                    response = requests.get(url['href'])
+                    domain_data['name'] = json.loads(response.text)['vcardArray'][1][1][-1]
+            else:
+                domain_data['entity'] = json_data['response']['data']['entities'][0]['vcardArray'][1][1][-1]
+                domain_data['cuit']   = "Datos restringidos"
+                domain_data['name']   = "Datos restringidos"
+            
         except Exception as Error:
             print("[DomainDiscover] - get_information\n%s" % Error)
+        
+        return domain_data
 
 
     # @params domain STR, nameservers LIST
@@ -174,36 +199,47 @@ class DomainDiscover(object):
         """ main method of DomainDiscover in charge of gather all the relevant information about the domain """
 
         domain_data = {
-            'domain'     : None,
-            'subdomain'  : None,
-            'suffix'     : None,
-            'events'     : None,
-            'nameservers': None,
-            'ping'       : None,
-            'nslookup'   : None,
+            'domain'        : None,
+            'subdomain'     : None,
+            'suffix'        : None,
+            'events'        : None,
+            'nameservers'   : None,
+            'domain_ping'   : None,
+            'subdomain_ping': None,
+            'nslookup'      : None,
+            'extra_data'    : None,
+            'status'        : False,
         }
 
         try:
+
             has_subdomain = self.get_subdomain(domain)
             if has_subdomain:
+
+                domain_data['subdomain_ping'] = self.ping(domain)
                 domain = domain.replace("%s." % has_subdomain,'')
 
-            json_data = self.UTILSSERVICE.rdap_data_provider(domain)
+            json_data = self.rdap_data_provider(domain)
 
             if json_data['status']:
-                _domain    = self.get_domain(domain)
-                _subdomain = self.get_subdomain(domain)
-                _suffix    = self.get_suffix(domain)
-                _ping      = self.ping(domain)
-                _dns       = self.get_nameservers(json_data=json_data['response']['data'])
-                _events    = self.get_rdap_events(json_data=json_data['response']['data'])
+                _domain     = self.get_domain(domain)
+                _subdomain  = self.get_subdomain(domain)
+                _suffix     = self.get_suffix(domain)
+                _ping       = self.ping(domain)
+                _dns        = self.get_nameservers(json_data=json_data['response']['data'])
+                _events     = self.get_rdap_events(json_data=json_data['response']['data'])
+                _extra_data = self.get_information(domain, json_data)
 
-                domain_data['domain'] = _domain
-                domain_data['subdomain'] = _subdomain
-                domain_data['suffix'] = _suffix
-                domain_data['ping'] = _ping
-                domain_data['events'] = _events
+                domain_data['domain']      = _domain
+                domain_data['subdomain']   = _subdomain
+                domain_data['suffix']      = _suffix
+                domain_data['domain_ping']        = _ping
+                domain_data['events']      = _events
                 domain_data['nameservers'] = _dns
+                domain_data['extra_data']  =_extra_data
+
+                if _events['expiration_date']:
+                    domain_data['status'] = True
 
                 if len(_dns) > 0:
                     _nslookup  = self.nslookup(domain, nameservers=_dns)

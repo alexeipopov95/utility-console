@@ -37,7 +37,7 @@ class Command(BaseCommand):
         print "----------------------------------------------"
 
         DD = DomainDiscover()
-        a = DD.discover(domain="sismatica.net")
+        a = DD.discover(domain="email.towebs.com")
         print(a)
 
         finish_date = datetime.now()
