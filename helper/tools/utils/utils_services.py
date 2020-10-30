@@ -111,4 +111,19 @@ class UtilsService(object):
         return rdap_data
 
 
+    # @params Datetime STR
+    def unicode_to_datetime(self, date):
+        """ receive a datetime value as a strign and return it as a datetime """
+
+        try:
+            if date:
+                date = datetime.strptime(date.replace("T",' ').replace("Z", ''), "%Y-%m-%d %H:%M:%S").strftime("%d-%m-%Y %H:%M:%S")
+        except Exception as Error:
+            print "[%12s] %5s %5s %5s" % (
+                datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                '[FAIL]',
+                '[unicode_to_datetime]',
+                Error.__str__(),
+            )
+        return date
 

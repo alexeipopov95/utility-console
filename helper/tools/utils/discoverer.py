@@ -68,16 +68,16 @@ class DomainDiscover(UtilsService):
         try:
             for event in json_data['events']:
                 if event['eventAction'] == 'registration':
-                    eventData['creation_date'] = event['eventDate']
+                    eventData['creation_date'] = self.unicode_to_datetime(event['eventDate'])
 
                 if event['eventAction'] == 'expiration':
-                    eventData['expiration_date'] = event['eventDate']
+                    eventData['expiration_date'] = self.unicode_to_datetime(event['eventDate'])
 
                 if event['eventAction'] == 'last update of RDAP database':
-                    eventData['last_date_rdap'] = event['eventDate']
+                    eventData['last_date_rdap'] = self.unicode_to_datetime(event['eventDate'])
 
                 if event['eventAction'] == 'last changed':
-                    eventData['last_date'] = event['eventDate']
+                    eventData['last_date'] = self.unicode_to_datetime(event['eventDate'])
 
         except Exception as Error:
             print("[DomainDiscover] - get_rdap_events\n%s" % Error)
@@ -113,8 +113,13 @@ class DomainDiscover(UtilsService):
             else:
                 param = "-c"
             
-            command = subprocess.check_output(['ping', param, '5', domain])
+            command = subprocess.check_output(['ping', param, '4', domain])
             result  = "".join(command).split('\n')
+            print(len(result))
+            result.pop(-1)
+            result.pop(-1)
+            result.pop(-3)
+            print(len(result))
         except Exception as Error:
             print("[DomainDiscover] - ping\n%s" % Error)
         
@@ -157,7 +162,7 @@ class DomainDiscover(UtilsService):
         domain_data = {
             'A'     : None,
             'MX'    : None,
-            'A-DNS' : None,
+            'A_DNS' : None,
         }
         a_records     = []
         mx_records    = []
@@ -186,7 +191,7 @@ class DomainDiscover(UtilsService):
                     nameserver_a = dns.resolver.query(str(nameserver),'A')
                     for ADNS in nameserver_a:
                         a_dns_records.append(ADNS)
-                domain_data['A-DNS'] = a_dns_records
+                domain_data['A_DNS'] = a_dns_records
 
         except Exception as Error:
             print("[DomainDiscover] - nslookup\n%s" % Error)
@@ -216,14 +221,16 @@ class DomainDiscover(UtilsService):
             has_subdomain = self.get_subdomain(domain)
             if has_subdomain:
 
+                _subdomain  = self.get_subdomain(domain)
                 domain_data['subdomain_ping'] = self.ping(domain)
+                domain_data['subdomain']   = _subdomain
+                
                 domain = domain.replace("%s." % has_subdomain,'')
 
             json_data = self.rdap_data_provider(domain)
 
             if json_data['status']:
                 _domain     = self.get_domain(domain)
-                _subdomain  = self.get_subdomain(domain)
                 _suffix     = self.get_suffix(domain)
                 _ping       = self.ping(domain)
                 _dns        = self.get_nameservers(json_data=json_data['response']['data'])
@@ -231,7 +238,6 @@ class DomainDiscover(UtilsService):
                 _extra_data = self.get_information(domain, json_data)
 
                 domain_data['domain']      = _domain
-                domain_data['subdomain']   = _subdomain
                 domain_data['suffix']      = _suffix
                 domain_data['domain_ping']        = _ping
                 domain_data['events']      = _events
