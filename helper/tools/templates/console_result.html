@@ -35,9 +35,11 @@ Resultado
 
 {% block content %}
 <div class="container">
+
     <div class="grid">
+
+        <!--PING DOMINIO-->
         <div class="row">
-            <!--PING DOMINIO-->
             <div class="col">
                 <div class="card bg-secondary text-center">
                     <div class="card-body">
@@ -51,10 +53,32 @@ Resultado
                 </div>
             </div>
         </div>
+
         <br>
-        {% if domainInfo.subdomain_ping %}
+
+        {% if domainInfo.ping_mail %}
+        <!--PING MAIL DOMINIO-->
         <div class="row">
-            <!--PING SUBDOMINIO-->
+            <div class="col">
+                <div class="card bg-secondary text-center">
+                    <div class="card-body">
+                      <h5 class="card-title" style="color: white;">PING MAIL DEL DOMINIO</h5>
+                      <ul class="list-group">
+                        {% for ping in domainInfo.ping_mail %}
+                        <li class="list-group-item">{{ping}}</li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br>
+        {% endif %}
+
+        {% if domainInfo.subdomain_ping %}
+        <!--PING SUBDOMINIO-->
+        <div class="row">
             <div class="col">
                 <div class="card bg-secondary text-center">
                     <div class="card-body">
@@ -68,8 +92,10 @@ Resultado
                 </div>
             </div>
         </div>
+
         <br>
         {% endif %}
+
         <div class="row">
             <!--DNS-->
             <div class="col">
@@ -97,6 +123,89 @@ Resultado
                       </ul>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <br>
+
+        <!--REGISTROS-->
+        <div class="row">
+            <!--REGISTROS A-->
+            <div class="col">
+                <div class="card bg-secondary text-center">
+                    <div class="card-body">
+                        <h5 class="card-title" style="color: white;">DIG A - DOMINIO</h5>
+                        <ul class="list-group">
+                        {% for A in domainInfo.nslookup.A %}
+                        <li class="list-group-item">{{A}}</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!--REGISTROS A DNS-->
+            <div class="col">
+                <div class="card bg-secondary text-center">
+                    <div class="card-body">
+                        <h5 class="card-title" style="color: white;">DIG A - DNS</h5>
+                        <ul class="list-group">
+                        {% for ADNS in domainInfo.nslookup.A_DNS %}
+                        <li class="list-group-item">{{ADNS}}</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!--REGISTROS MX-->
+            <div class="col">
+                <div class="card bg-secondary text-center">
+                    <div class="card-body">
+                        <h5 class="card-title" style="color: white;">DIG MX - DOMINIO</h5>
+                        <ul class="list-group">
+                        {% for MX in domainInfo.nslookup.MX %}
+                        <li class="list-group-item">{{MX}}</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col">
+                <div class="card bg-secondary text-center">
+                    <div class="card-body">
+                        <h5 class="card-title" style="color: white;">DIG TXT - DOMINIO</h5>
+                        <ul class="list-group">
+                        {% for RTXT in domainInfo.nslookup.TXT %}
+                        <li class="list-group-item">{{RTXT}}</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+            <!--DATOS DEL TITULAR-->
+            <div class="col">
+                <div class="card bg-secondary text-center">
+                    <div class="card-body">
+                        <h5 class="card-title" style="color: white;">DATOS SOBRE EL TITULAR</h5>
+                        <ul class="list-group">
+                        {% if domainInfo.status %}
+                        <li class="list-group-item" style="color: green;"> <strong>Estado del dominio: </strong>Activo</li>
+                        {% else%}
+                        <li class="list-group-item"> <strong>Estado del dominio: </strong>Dudoso</li>
+                        {% endif%}
+                            <li class="list-group-item"> <strong>Entidad registrante: </strong>{{domainInfo.extra_data.entity}}</li>
+                            <li class="list-group-item"> <strong>Cuit: </strong>{{domainInfo.extra_data.cuit}}</li>
+                            <li class="list-group-item"> <strong>Nombre del titular: </strong>{{domainInfo.extra_data.name}}</li>
+                        </ul>
+                    </div>
+                  </div>
             </div>
         </div>
 
@@ -152,73 +261,10 @@ Resultado
                 </div>
             </div>
         </div>
-        <br>
-        <div class="row">
-
-            <!--DATOS DEL TITULAR-->
-            <div class="col">
-                <div class="card bg-secondary text-center">
-                    <h5 class="card-title" style="color: white;">DATOS SOBRE EL TITULAR</h5>
-                    <div class="card-body">
-                        <ul class="list-group">
-                        {% if domainInfo.status %}
-                        <li class="list-group-item" style="color: green;"> <strong>Estado del dominio: </strong>Activo</li>
-                        {% else%}
-                        <li class="list-group-item"> <strong>Estado del dominio: </strong>Dudoso</li>
-                        {% endif%}
-                            <li class="list-group-item"> <strong>Entidad registrante: </strong>{{domainInfo.extra_data.entity}}</li>
-                            <li class="list-group-item"> <strong>Cuit: </strong>{{domainInfo.extra_data.cuit}}</li>
-                            <li class="list-group-item"> <strong>Nombre del titular: </strong>{{domainInfo.extra_data.name}}</li>
-                        </ul>
-                    </div>
-                  </div>
-            </div>
-        </div>
 
         <br>
 
-        <!--REGISTROS-->
-        <div class="row">
-            <!--REGISTROS A-->
-            <div class="col">
-                <div class="card bg-secondary text-center">
-                    <div class="card-body">
-                        <h5 class="card-title" style="color: white;">REGISTRO TIPO A DOMINIO</h5>
-                        <ul class="list-group">
-                        {% for A in domainInfo.nslookup.A %}
-                        <li class="list-group-item">{{A}}</li>
-                        {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <!--REGISTROS A DNS-->
-            <div class="col">
-                <div class="card bg-secondary text-center">
-                    <div class="card-body">
-                        <h5 class="card-title" style="color: white;">REGISTRO TIPO A DNS</h5>
-                        <ul class="list-group">
-                        {% for ADNS in domainInfo.nslookup.A_DNS %}
-                        <li class="list-group-item">{{ADNS}}</li>
-                        {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <!--REGISTROS MX-->
-            <div class="col">
-                <div class="card bg-secondary text-center">
-                    <div class="card-body">
-                        <h5 class="card-title" style="color: white;">REGISTRO TIPO MX</h5>
-                        <ul class="list-group">
-                        {% for MX in domainInfo.nslookup.MX %}
-                        <li class="list-group-item">{{MX}}</li>
-                        {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
         
     </div>
     <div class="container">

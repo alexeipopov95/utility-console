@@ -102,24 +102,31 @@ class DomainDiscover(UtilsService):
 
 
     # @params domain STR
-    def ping(self, domain):
-        """ make a ping using subprocess command to retrive the status of the domain """
+    def ping(self, domain, order=None):
+        """ make a ping using subprocess command to retrive the status of the domain 
+        order is equal to only ping or ping mail"""
 
-        result = "Name or service not know"
+        result = ""
+        param = None
+
         try:
-            param = None
+            
             if platform.system().lower() == "windows":
                 param = "-n"
             else:
                 param = "-c"
+
+
+            if order == "ping":
+                command = subprocess.check_output(['ping', param, '4', domain])
+
+            if order == "mail":
+                command = subprocess.check_output(['ping', param, '4', "mail.%s" % domain])
             
-            command = subprocess.check_output(['ping', param, '4', domain])
             result  = "".join(command).split('\n')
-            print(len(result))
             result.pop(-1)
             result.pop(-1)
             result.pop(-3)
-            print(len(result))
         except Exception as Error:
             print("[DomainDiscover] - ping\n%s" % Error)
         
@@ -163,10 +170,12 @@ class DomainDiscover(UtilsService):
             'A'     : None,
             'MX'    : None,
             'A_DNS' : None,
+            'TXT'   : None,
         }
         a_records     = []
         mx_records    = []
         a_dns_records = []
+        txt_records   = []
 
         try:
             has_subdomain = self.get_subdomain(domain)
@@ -190,12 +199,18 @@ class DomainDiscover(UtilsService):
                 for nameserver in nameservers:
                     nameserver_a = dns.resolver.query(str(nameserver),'A')
                     for ADNS in nameserver_a:
-                        a_dns_records.append(ADNS)
+                        a_dns_records.append("%s: %s" % (nameserver , ADNS) )
                 domain_data['A_DNS'] = a_dns_records
+
+
+            #A record for domain only
+            domain_a = dns.resolver.query(str(domain),'TXT')
+            for TXT in domain_a:
+                txt_records.append(TXT)
+            domain_data['TXT'] = txt_records
 
         except Exception as Error:
             print("[DomainDiscover] - nslookup\n%s" % Error)
-        
         return domain_data
 
 
@@ -211,6 +226,7 @@ class DomainDiscover(UtilsService):
             'nameservers'   : None,
             'domain_ping'   : None,
             'subdomain_ping': None,
+            'ping_mail'     : None,
             'nslookup'      : None,
             'extra_data'    : None,
             'status'        : False,
@@ -220,29 +236,29 @@ class DomainDiscover(UtilsService):
 
             has_subdomain = self.get_subdomain(domain)
             if has_subdomain:
-
-                _subdomain  = self.get_subdomain(domain)
-                domain_data['subdomain_ping'] = self.ping(domain)
-                domain_data['subdomain']   = _subdomain
-                
-                domain = domain.replace("%s." % has_subdomain,'')
+                _subdomain                    = self.get_subdomain(domain)
+                domain_data['subdomain_ping'] = self.ping(domain, order="ping")
+                domain_data['subdomain']      = _subdomain
+                domain                        = domain.replace("%s." % has_subdomain,'')
 
             json_data = self.rdap_data_provider(domain)
 
             if json_data['status']:
                 _domain     = self.get_domain(domain)
                 _suffix     = self.get_suffix(domain)
-                _ping       = self.ping(domain)
+                _ping       = self.ping(domain, order="ping")
+                _ping_mail  = self.ping(domain, order="mail")
                 _dns        = self.get_nameservers(json_data=json_data['response']['data'])
                 _events     = self.get_rdap_events(json_data=json_data['response']['data'])
                 _extra_data = self.get_information(domain, json_data)
 
                 domain_data['domain']      = _domain
                 domain_data['suffix']      = _suffix
-                domain_data['domain_ping']        = _ping
+                domain_data['domain_ping'] = _ping
                 domain_data['events']      = _events
                 domain_data['nameservers'] = _dns
-                domain_data['extra_data']  =_extra_data
+                domain_data['extra_data']  = _extra_data
+                domain_data['ping_mail']   = _ping_mail
 
                 if _events['expiration_date']:
                     domain_data['status'] = True

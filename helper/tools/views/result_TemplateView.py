@@ -19,5 +19,4 @@ class ResultTemplateView(TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         context['domainInfo'] = domain_data = self.domainDiscover.discover(context['domain'])
-        print(context['domainInfo'])
         return self.render_to_response(context)
