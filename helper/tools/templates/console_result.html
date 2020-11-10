@@ -37,65 +37,94 @@ Resultado
 <div class="container">
 
     <div class="grid">
-
-        <!--PING DOMINIO-->
         <div class="row">
             <div class="col">
-                <div class="card bg-secondary text-center">
-                    <div class="card-body">
-                      <h5 class="card-title" style="color: white;">PING DEL DOMINIO</h5>
-                      <ul class="list-group">
-                        {% for ping in domainInfo.domain_ping %}
-                        <li class="list-group-item">{{ping}}</li>
-                        {% endfor %}
-                      </ul>
+
+                <div id="accordion">
+                    <div class="card bg-secondary text-center">
+                      <div class="card-header" id="headingOne">
+                        <h5 class="mb-0">
+                        <a class="btn collapsed"
+                                data-toggle="collapse"
+                                data-target="#collapseOne"
+                                aria-expanded="false"
+                                aria-controls="collapseOne"
+                                style="color: white; margin-right: 5px;"
+                                href="javascript:void(0);">
+                                <strong>PING DEL DOMINIO</strong> <i style="padding-left: 5px;" class="fas fa-arrow-down"></i>
+                        </a>
+                        </h5>
+                      </div>
+                      <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                        <div class="card-body">
+                            <ul class="list-group">
+                                {% for ping in domainInfo.domain_ping %}
+                                <li class="list-group-item">{{ping}}</li>
+                                {% endfor %}
+                              </ul>
+                        </div>
+                      </div>
                     </div>
-                </div>
+        
+                    {% if domainInfo.ping_mail %}
+                    <div class="card bg-secondary text-center">
+                      <div class="card-header" id="headingTwo">
+                        <h5 class="mb-0">
+                        <a class="btn collapsed"
+                                data-toggle="collapse"
+                                data-target="#collapseTwo"
+                                aria-expanded="false"
+                                aria-controls="collapseTwo"
+                                style="color: white;"
+                                href="javascript:void(0);">
+                                <strong>PING MAIL DEL DOMINIO</strong> <i style="padding-left: 5px;" class="fas fa-arrow-down"></i>
+                        </a>
+                        </h5>
+                      </div>
+                      <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                        <div class="card-body">
+                            <ul class="list-group">
+                                {% for ping in domainInfo.ping_mail %}
+                                <li class="list-group-item">{{ping}}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                      </div>
+                    </div>
+                    {% endif %}
+        
+                    {% if domainInfo.subdomain_ping %}
+                    <div class="card bg-secondary text-center">
+                      <div class="card-header" id="headingThree">
+                        <h5 class="mb-0">
+                        <a class="btn collapsed"
+                                data-toggle="collapse"
+                                data-target="#collapseThree"
+                                aria-expanded="false"
+                                aria-controls="collapseThree"
+                                style="color: white;"
+                                href="javascript:void(0);">
+                                <strong>PING DEL SUBDOMINIO</strong> <i style="padding-left: 5px;" class="fas fa-arrow-down"></i>
+                        </a>
+                        </h5>
+                      </div>
+                      <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                        <div class="card-body">
+                            <ul class="list-group">
+                                {% for ping in domainInfo.subdomain_ping %}
+                                <li class="list-group-item">{{ping}}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                      </div>
+                    </div>
+                    {% endif %}
+        
+                  </div>
             </div>
         </div>
-
-        <br>
-
-        {% if domainInfo.ping_mail %}
-        <!--PING MAIL DOMINIO-->
-        <div class="row">
-            <div class="col">
-                <div class="card bg-secondary text-center">
-                    <div class="card-body">
-                      <h5 class="card-title" style="color: white;">PING MAIL DEL DOMINIO</h5>
-                      <ul class="list-group">
-                        {% for ping in domainInfo.ping_mail %}
-                        <li class="list-group-item">{{ping}}</li>
-                        {% endfor %}
-                      </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <br>
-        {% endif %}
-
-        {% if domainInfo.subdomain_ping %}
-        <!--PING SUBDOMINIO-->
-        <div class="row">
-            <div class="col">
-                <div class="card bg-secondary text-center">
-                    <div class="card-body">
-                      <h5 class="card-title" style="color: white;">PING DEL SUBDOMINIO</h5>
-                      <ul class="list-group">
-                        {% for ping in domainInfo.subdomain_ping %}
-                        <li class="list-group-item">{{ping}}</li>
-                        {% endfor %}
-                      </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <br>
-        {% endif %}
-
+        
+          <br>
         <div class="row">
             <!--DNS-->
             <div class="col">

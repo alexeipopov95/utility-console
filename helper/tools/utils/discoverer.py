@@ -124,6 +124,7 @@ class DomainDiscover(UtilsService):
                 command = subprocess.check_output(['ping', param, '4', "mail.%s" % domain])
             
             result  = "".join(command).split('\n')
+            result.pop(0)
             result.pop(-1)
             result.pop(-1)
             result.pop(-3)
